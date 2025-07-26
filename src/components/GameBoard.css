@@ -1,13 +1,16 @@
 .game-board {
   display: grid;
-  grid-template-columns: repeat(15, 35px);
+  grid-template-columns: repeat(15, 35px); /* Reduced square size */
   grid-template-rows: repeat(15, 35px);
-  gap: 1px;
-  background-color: #654321;
-  padding: 10px;
+  gap: 1px; /* Reduced gap */
+  background-color: #783f2b; /* Light Brown/Tan for board background */
+  padding: 10px; /* Reduced padding */
   border-radius: 8px;
-  margin: 20px auto;
+  margin: 15px auto; /* Reduced margin */
   width: fit-content;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), /* Adjusted shadow */
+              inset 0 0 8px rgba(0, 0, 0, 0.2); /* Adjusted inner shadow */
+  perspective: 1000px; /* For 3D transforms */
 }
 
 .board-square {
@@ -16,66 +19,79 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #8B4513;
+  /* border: 1px solid #8D6E63; Slightly darker border */
   cursor: pointer;
   position: relative;
-  font-size: 10px;
+  font-size: 9px; /* Reduced font size */
   font-weight: bold;
-  background-color: #F5DEB3;
+  background-color: #FFE6A8; /* Cream/Tan for normal squares */
+  transition: all 0.15s ease-out;
 }
 
+
 .board-square--normal {
-  background-color: #F5DEB3;
+  background-color: #fcf2d9;
 }
 
 .board-square--center {
-  background-color: #FFB6C1;
-  color: #8B0000;
+  background-color: #F8BBD0; /* Pastel Pink for center */
+  color: #8B0000; /* Dark Red for contrast */
+  /* box-shadow: inset 0 0 6px rgba(183, 28, 28, 0.3); */
 }
 
 .board-square--double-letter {
-  background-color: #87CEEB;
-  color: #000080;
+  background-color: #E3F2FD; /* Very Light Pastel Blue for DLS */
+  color: #000080; /* Dark Blue for contrast */
+  /* box-shadow: inset 0 0 6px rgba(25, 118, 210, 0.3); */
 }
 
 .board-square--triple-letter {
-  background-color: #4169E1;
+  background-color: #7bbef5; /* Pastel Blue for TLS */
   color: white;
+  /* box-shadow: inset 0 0 6px rgba(21, 101, 192, 0.3); */
 }
 
 .board-square--double-word {
-  background-color: #FFA07A;
-  color: #8B0000;
+  background-color: #F8BBD0; /* Pastel Pink for DWS */
+  color: #8B0000; /* Dark Red for contrast */
+  /* box-shadow: inset 0 0 6px rgba(216, 67, 21, 0.3); */
 }
 
 .board-square--triple-word {
-  background-color: #FF6347;
+  background-color: #ef707d; /* Pastel Red for TWS */
   color: white;
+  /* box-shadow: inset 0 0 6px rgba(230, 74, 25, 0.3); */
 }
 
 .tile {
-  width: 30px;
-  height: 30px;
-  background-color: #F5F5DC;
-  border: 2px solid #8B4513;
-  border-radius: 4px;
+  width: 32px; /* Adjusted tile size */
+  height: 32px;
+  background-color: #FFFDE7; /* Off-white for tiles */
+  border: 1px solid #BDBDBD; /* Light Grey border */
+  border-radius: 4px; /* Adjusted rounded corners */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   position: relative;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), /* Adjusted shadow */
+              inset 0 0 3px rgba(255, 255, 255, 0.5); /* Adjusted inner highlight */
+  transition: all 0.15s ease-out;
+  transform-style: preserve-3d; /* For true 3D rotation */
+  backface-visibility: hidden;
 }
 
 .tile-letter {
-  font-size: 14px;
+  font-size: 14px; /* Reduced letter font size */
   font-weight: bold;
-  color: #000;
+  color: #212121; /* Dark Grey - strong letter color */
   line-height: 1;
+  text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.1); /* Adjusted text shadow */
 }
 
 .tile-value {
-  font-size: 8px;
-  color: #666;
+  font-size: 8px; /* Reduced value font size */
+  color: #424242; /* Medium Grey - value color */
   position: absolute;
   bottom: 1px;
   right: 2px;
@@ -83,16 +99,18 @@
 }
 
 .multiplier-text {
-  font-size: 9px;
+  font-size: 8px; /* Reduced font size */
   font-weight: bold;
   text-align: center;
   line-height: 1;
+  color: rgba(0, 0, 0, 0.6); /* Muted text color for multipliers */
 }
 
 .board-square.drag-over {
-  background-color: #90EE90 !important;
-  border: 2px dashed #32CD32 !important;
-  transform: scale(1.05);
+  background-color: #A5D6A7 !important; /* Muted green for drag over */
+  border: 1px dashed #4CAF50 !important; /* Thinner dashed border */
+  transform: scale(1.02) translateY(-1px); /* Reduced lift and scale */
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3); /* Adjusted shadow */
   transition: all 0.2s ease;
 }
 
@@ -102,9 +120,21 @@
 
 .tile.removable:active {
   cursor: grabbing;
+  transform: scale(1.05) rotateX(3deg); /* Less pronounced active state */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
 .tile.removable:hover {
-  transform: scale(1.05);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px) rotateX(2deg); /* Less pronounced lift and rotation on hover */
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.35);
+}
+
+.board-square.valid-word-outline {
+  box-shadow: 0 0 0 2px #4CAF50, inset 0 0 4px rgba(76, 175, 80, 0.5); /* Thinner green outline */
+  z-index: 1; /* Ensure outline is visible */
+}
+
+.board-square.invalid-word-outline {
+  box-shadow: 0 0 0 2px #F44336, inset 0 0 4px rgba(244, 67, 54, 0.5); /* Thinner red outline */
+  z-index: 1; /* Ensure outline is visible */
 }

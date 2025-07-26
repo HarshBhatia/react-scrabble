@@ -1,64 +1,116 @@
 .game-controls {
   display: flex;
+  flex-direction: column; /* Stack action groups vertically */
+  align-items: center; /* Center align groups */
+  gap: 15px; /* Space between main and secondary action groups */
+  margin: 15px;
+}
+
+.main-actions {
+  width: 100%;
+  display: flex;
   justify-content: center;
-  gap: 15px;
-  margin: 20px;
+}
+
+.secondary-actions {
+  display: flex;
+  justify-content: center;
   flex-wrap: wrap;
+  gap: 10px; /* Gap between secondary buttons */
 }
 
 .control-button {
-  padding: 12px 24px;
-  font-size: 16px;
+  padding: 10px 20px; /* Reduced padding */
+  font-size: 15px; /* Reduced font size */
   font-weight: bold;
   border: none;
-  border-radius: 6px;
+  border-radius: 6px; /* Slightly less rounded corners */
   cursor: pointer;
-  transition: all 0.2s ease;
-  min-width: 120px;
-}
-
-.control-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.control-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  transition: all 0.2s ease-out;
+  min-width: 110px; /* Reduced min-width */
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2); /* Adjusted shadow */
+  position: relative;
+  overflow: hidden;
 }
 
 .control-button.submit {
-  background-color: #4CAF50;
+  padding: 12px 25px; /* Slightly larger padding for submit button */
+  font-size: 16px; /* Slightly larger font for submit button */
+  min-width: 140px; /* Wider submit button */
+  background-color: #4CAF50; /* Green */
   color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .control-button.submit:hover:not(:disabled) {
-  background-color: #45a049;
+  background-color: #43A047; /* Darker green */
+  transform: translateY(-3px); /* More pronounced lift for submit */
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3); /* Stronger shadow for submit */
+}
+
+.control-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+  transition: all 0.3s ease;
+}
+
+.control-button:hover::before {
+  transform: translateY(-50%) translateX(-50%);
+  opacity: 0;
+}
+
+.control-button:hover:not(:disabled) {
+  transform: translateY(-2px); /* Reduced lift */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Adjusted shadow */
+}
+
+.control-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Adjusted shadow */
 }
 
 .control-button.pass {
-  background-color: #f44336;
+  background-color: #F44336; /* Red */
   color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .control-button.pass:hover {
-  background-color: #da190b;
+  background-color: #E53935; /* Darker red */
 }
 
 .control-button.shuffle {
-  background-color: #2196F3;
+  background-color: #2196F3; /* Blue */
   color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .control-button.shuffle:hover {
-  background-color: #0b7dda;
+  background-color: #1E88E5; /* Darker blue */
 }
 
 .control-button.recall {
-  background-color: #FF9800;
+  background-color: #FF9800; /* Orange */
   color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .control-button.recall:hover:not(:disabled) {
-  background-color: #F57C00;
+  background-color: #FB8C00; /* Darker orange */
+}
+
+.control-button.new-game {
+  background-color: #607D8B; /* Blue Grey */
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.control-button.new-game:hover {
+  background-color: #546E7A; /* Darker Blue Grey */
 }

@@ -7,16 +7,21 @@ interface BoardSquareProps {
   onDrop: (tile: Tile, row: number, col: number) => void;
   onTileRemove: (row: number, col: number) => void;
   canRemoveTile: boolean;
+  isPartofValidWord: boolean;
+  isPartofInvalidWord: boolean;
 }
 
-const BoardSquare: React.FC<BoardSquareProps> = ({ square, onClick, onDrop, onTileRemove, canRemoveTile }) => {
+const BoardSquare: React.FC<BoardSquareProps> = ({ square, onClick, onDrop, onTileRemove, canRemoveTile, isPartofValidWord, isPartofInvalidWord }) => {
   const [isDragOver, setIsDragOver] = useState(false);
 
   const getSquareClass = () => {
     const baseClass = 'board-square';
     const multiplierClass = `${baseClass}--${square.multiplier}`;
     const dragOverClass = isDragOver ? 'drag-over' : '';
-    return `${baseClass} ${multiplierClass} ${dragOverClass}`.trim();
+    const hasTileClass = square.tile ? 'has-tile' : '';
+    const validWordClass = isPartofValidWord ? 'valid-word-outline' : '';
+    const invalidWordClass = isPartofInvalidWord ? 'invalid-word-outline' : '';
+    return `${baseClass} ${multiplierClass} ${dragOverClass} ${hasTileClass} ${validWordClass} ${invalidWordClass}`.trim();
   };
 
   const getMultiplierText = () => {

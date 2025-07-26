@@ -13,30 +13,32 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({
   currentPlayerIndex,
   tilesRemaining
 }) => {
+  const player1 = players[0];
+  const player2 = players[1];
+
   return (
     <div className="player-info">
-      <div className="players-section">
-        <h2>Players</h2>
-        <div className="players-list">
-          {players.map((player, index) => (
-            <div
-              key={player.id}
-              className={`player-card ${index === currentPlayerIndex ? 'current' : ''}`}
-            >
-              <div className="player-name">
-                {player.name}
-                {index === currentPlayerIndex && <span className="current-indicator"> (Current Turn)</span>}
-              </div>
-              <div className="player-score">Score: {player.score}</div>
-              <div className="player-tiles">Tiles: {player.rack.length}</div>
-            </div>
-          ))}
+      {/* Player 1 Info (Left) */}
+      <div className={`player-card ${currentPlayerIndex === 0 ? 'current' : ''}`}>
+        <div className="player-name">
+          {player1.name}
         </div>
+        <div className="player-score">{player1.score}</div>
       </div>
+
+      {/* Tiles Remaining (Center) */}
       <div className="game-info">
         <div className="tiles-remaining">
           Tiles Remaining: {tilesRemaining}
         </div>
+      </div>
+
+      {/* Player 2 Info (Right) */}
+      <div className={`player-card ${currentPlayerIndex === 1 ? 'current' : ''}`}>
+        <div className="player-name">
+          {player2.name}
+        </div>
+        <div className="player-score">{player2.score}</div>
       </div>
     </div>
   );

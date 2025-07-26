@@ -1,39 +1,40 @@
 .validation-message {
-  margin: 15px 20px;
-  padding: 12px 16px;
-  border-radius: 6px;
-  font-size: 14px;
+  margin: 15px 20px; /* Reduced margin */
+  padding: 12px 18px; /* Reduced padding */
+  border-radius: 8px;
+  font-size: 14px; /* Reduced font size */
   font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 8px; /* Reduced gap */
   min-height: 20px;
   max-width: 600px;
   word-wrap: break-word;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Adjusted shadow */
 }
 
 .validation-message.error {
-  background-color: #ffebee;
-  color: #c62828;
-  border: 1px solid #ffcdd2;
+  background-color: #FFEBEE; /* Light red */
+  color: #C62828; /* Dark red */
+  border: 1px solid #EF9A9A;
 }
 
 .validation-message.validating {
-  background-color: #e3f2fd;
-  color: #1565c0;
-  border: 1px solid #bbdefb;
+  background-color: #E3F2FD; /* Light blue */
+  color: #1565C0; /* Dark blue */
+  border: 1px solid #90CAF9;
 }
 
 .error-icon {
-  font-size: 16px;
+  font-size: 16px; /* Reduced font size */
   flex-shrink: 0;
 }
 
 .spinner {
-  width: 16px;
+  width: 16px; /* Reduced size */
   height: 16px;
-  border: 2px solid #bbdefb;
-  border-top: 2px solid #1565c0;
+  border: 2px solid #90CAF9; /* Lighter blue for spinner track */
+  border-top: 2px solid #1565C0; /* Darker blue for spinner */
   border-radius: 50%;
   animation: spin 1s linear infinite;
   flex-shrink: 0;
@@ -47,4 +48,8 @@
 /* Hide validation message when not needed */
 .validation-message:empty {
   display: none;
+}
+
+.validation-message:not(:empty) {
+  display: flex;
 }

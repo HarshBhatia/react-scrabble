@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { GameState, BoardSquare, Tile, Player, PlacedTile } from '../types/game';
 import { BOARD_SIZE, LETTER_DISTRIBUTION, PREMIUM_SQUARES, RACK_SIZE } from '../constants/scrabble';
 import { validateMove } from '../utils/gameValidation';
@@ -65,23 +65,42 @@ const drawTiles = (tileBag: Tile[], count: number): { drawnTiles: Tile[], remain
 };
 
 export const useScrabbleGame = () => {
-  const [gameState, setGameState] = useState<GameState>(() => {
+  const [gameState, setGameState] = useState<GameState | null>(() => {
+    try {
+      const savedGameState = localStorage.getItem('scrabbleGameState');
+      return savedGameState ? JSON.parse(savedGameState) : null;
+    } catch (error) {
+      console.error("Error loading game state from localStorage:", error);
+      return null;
+    }
+  });
+  const [gameStarted, setGameStarted] = useState(() => {
+    try {
+      const savedGameStarted = localStorage.getItem('scrabbleGameStarted');
+      return savedGameStarted ? JSON.parse(savedGameStarted) : false;
+    } catch (error) {
+      console.error("Error loading gameStarted from localStorage:", error);
+      return false;
+    }
+  });
+
+  const startGame = useCallback((playerNames: string[]) => {
     const tileBag = createTileBag();
     const { drawnTiles: player1Tiles, remainingBag: bagAfterPlayer1 } = drawTiles(tileBag, RACK_SIZE);
     const { drawnTiles: player2Tiles, remainingBag: finalBag } = drawTiles(bagAfterPlayer1, RACK_SIZE);
     
-    return {
+    setGameState({
       board: createInitialBoard(),
       players: [
         {
           id: 'player1',
-          name: 'Player 1',
+          name: playerNames[0],
           score: 0,
           rack: player1Tiles
         },
         {
           id: 'player2',
-          name: 'Player 2',
+          name: playerNames[1],
           score: 0,
           rack: player2Tiles
         }
@@ -90,16 +109,21 @@ export const useScrabbleGame = () => {
       tileBag: finalBag,
       gameStarted: true,
       gameOver: false
-    };
-  });
+    });
+    setGameStarted(true);
+  }, []);
 
   const [selectedTile, setSelectedTile] = useState<Tile | null>(null);
   const [placedTiles, setPlacedTiles] = useState<PlacedTile[]>([]);
   const [isShuffling, setIsShuffling] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [isValidating, setIsValidating] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successModalData, setSuccessModalData] = useState<{ playerName: string; words: string; points: number } | null>(null);
+  const [realtimeValidation, setRealtimeValidation] = useState<ValidationResult | null>(null);
 
   const placeTile = useCallback((row: number, col: number, tile?: Tile) => {
+    if (!gameState) return; // Add null check
     const tileToPlace = tile || selectedTile;
     if (!tileToPlace || gameState.board[row][col].tile) return;
 
@@ -133,7 +157,7 @@ export const useScrabbleGame = () => {
     if (!tile) {
       setSelectedTile(null); // Only clear selection if placed via click, not drag
     }
-  }, [selectedTile, gameState.board]);
+  }, [selectedTile, gameState]);
 
   const handleTileReturn = useCallback((tileData: any) => {
     if (!tileData.fromBoard || !tileData.boardPosition) return;
@@ -186,6 +210,7 @@ export const useScrabbleGame = () => {
   }, [placedTiles]);
 
   const handleTileDrop = useCallback((droppedItem: any, toRow: number, toCol: number) => {
+    if (!gameState) return; // Add null check
     const tile = { ...droppedItem };
     const { fromBoard, boardPosition } = droppedItem;
 
@@ -222,6 +247,7 @@ export const useScrabbleGame = () => {
   const submitWord = useCallback(() => {
     if (placedTiles.length === 0) return;
     if (isValidating) return;
+    if (!gameState) return; // Add null check for gameState
 
     setIsValidating(true);
     setValidationError(null);
@@ -247,8 +273,11 @@ export const useScrabbleGame = () => {
         return;
       }
 
+      console.log("Validation result before setting modal data:", validation);
+
       // Valid move - update game state
       setGameState(prev => {
+        if (!prev) return prev; // Ensure prev is not null
         const newBoard = prev.board.map(row => 
           row.map(square => ({ ...square }))
         );
@@ -272,6 +301,14 @@ export const useScrabbleGame = () => {
             : player
         );
 
+        // Set modal data and show modal
+        setSuccessModalData({
+          playerName: currentPlayer.name,
+          words: validation.words.map(w => w.word).join(', '), // Join all valid words
+          points: validation.totalScore
+        });
+        setShowSuccessModal(true);
+
         return {
           ...prev,
           board: newBoard,
@@ -290,9 +327,10 @@ export const useScrabbleGame = () => {
     } finally {
       setIsValidating(false);
     }
-  }, [placedTiles, gameState.board, isValidating]);
+  }, [placedTiles, gameState, isValidating]);
 
   const passTurn = useCallback(() => {
+    if (!gameState) return; // Add null check for gameState
     setGameState(prev => ({
       ...prev,
       currentPlayerIndex: (prev.currentPlayerIndex + 1) % prev.players.length
@@ -302,11 +340,17 @@ export const useScrabbleGame = () => {
   }, []);
 
   const shuffleRack = useCallback(() => {
+    if (!gameState) return; // Add null check for gameState
     setIsShuffling(true);
 
     // Brief delay to show animation before actual shuffle
     setTimeout(() => {
       setGameState(prev => {
+        if (!prev) return prev; // Add null check for prev
+        if (!prev.players) { // Explicitly check if players array is null/undefined
+          console.error("prev.players is null/undefined in shuffleRack setGameState callback.", prev);
+          return prev; // Return prev to avoid further errors
+        }
         const currentPlayer = prev.players[prev.currentPlayerIndex];
         const shuffledRack = [...currentPlayer.rack];
         
@@ -332,7 +376,7 @@ export const useScrabbleGame = () => {
         setIsShuffling(false);
       }, 100);
     }, 200);
-  }, [gameState.currentPlayerIndex]);
+  }, [gameState]);
 
   const recallAllTiles = useCallback(() => {
     if (placedTiles.length === 0) return;
@@ -345,7 +389,7 @@ export const useScrabbleGame = () => {
       // Remove all placed tiles from board
       placedTiles.forEach(({ position }) => {
         newBoard[position.row][position.col] = {
-          ...newBoard[position.row][position.col],
+          ...newBoard[position.row][col],
           tile: null
         };
       });
@@ -372,6 +416,73 @@ export const useScrabbleGame = () => {
     setValidationError(null);
   }, [placedTiles]);
 
+  const handleCloseSuccessModal = useCallback(() => {
+    setShowSuccessModal(false);
+    setSuccessModalData(null);
+  }, []);
+
+  // Real-time validation effect
+  useEffect(() => {
+    if (!gameState) return; // Add this null check
+    if (placedTiles.length > 0) {
+      try {
+        // Reconstruct the original board state for validation
+        const originalBoard = gameState.board.map(row => row.map(square => ({ ...square })));
+        placedTiles.forEach(({ position }) => {
+          originalBoard[position.row][position.col].tile = null;
+        });
+
+        const validation = validateMove(gameState.board, placedTiles, originalBoard);
+        setRealtimeValidation(validation);
+        setValidationError(validation.isValid ? null : validation.errors.join(', '));
+      } catch (error) {
+        console.error("Real-time validation error:", error);
+        setRealtimeValidation(null);
+        setValidationError("Error during real-time validation.");
+      }
+    } else {
+      setRealtimeValidation(null);
+      setValidationError(null);
+    }
+  }, [placedTiles, gameState]);
+
+  // Save game state to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      if (gameState) {
+        localStorage.setItem('scrabbleGameState', JSON.stringify(gameState));
+      } else {
+        localStorage.removeItem('scrabbleGameState');
+      }
+    } catch (error) {
+      console.error("Error saving game state to localStorage:", error);
+    }
+  }, [gameState]);
+
+  // Save gameStarted to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('scrabbleGameStarted', JSON.stringify(gameStarted));
+    } catch (error) {
+      console.error("Error saving gameStarted to localStorage:", error);
+    }
+  }, [gameStarted]);
+
+  const newGame = useCallback(() => {
+    localStorage.removeItem('scrabbleGameState');
+    localStorage.removeItem('scrabbleGameStarted');
+    setGameState(null);
+    setGameStarted(false);
+    setSelectedTile(null);
+    setPlacedTiles([]);
+    setIsShuffling(false);
+    setValidationError(null);
+    setIsValidating(false);
+    setShowSuccessModal(false);
+    setSuccessModalData(null);
+    setRealtimeValidation(null);
+  }, []);
+
   return {
     gameState,
     selectedTile,
@@ -379,6 +490,9 @@ export const useScrabbleGame = () => {
     isShuffling,
     validationError,
     isValidating,
+    showSuccessModal,
+    successModalData,
+    realtimeValidation,
     placeTile,
     handleTileDrop,
     handleTileReturn,
@@ -387,6 +501,10 @@ export const useScrabbleGame = () => {
     submitWord,
     passTurn,
     shuffleRack,
-    recallAllTiles
+    recallAllTiles,
+    handleCloseSuccessModal,
+    startGame,
+    gameStarted,
+    newGame
   };
 };

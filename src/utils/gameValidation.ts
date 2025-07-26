@@ -67,10 +67,10 @@ export const validateMove = (
   }
   
   // Get all words formed by this move
-  const words = getAllWordsFormed(board, placedTiles);
+  const allFormedWords = getAllWordsFormed(board, placedTiles);
   
-  if (words.length === 0) {
-    errors.push('No valid words were formed');
+  if (allFormedWords.length === 0) {
+    errors.push('No words were formed by this move.');
     return {
       isValid: false,
       errors,
@@ -79,10 +79,25 @@ export const validateMove = (
     };
   }
   
+  // Filter for words that contain at least one newly placed tile
+  const wordsWithNewTiles = allFormedWords.filter(word => 
+    word.tiles.some(tile => placedTiles.some(pt => pt.position.row === tile.position.row && pt.position.col === tile.position.col))
+  );
+
+  if (wordsWithNewTiles.length === 0) {
+    errors.push('New tiles must form at least one word.');
+    return {
+      isValid: false,
+      errors,
+      words: [],
+      totalScore: 0
+    };
+  }
+
   // Validate each word in the dictionary and calculate scores
   const validatedWords: WordInfo[] = [];
   
-  for (const word of words) {
+  for (const word of wordsWithNewTiles) { // Iterate over words that contain new tiles
     const isWordValid = isValidWord(word.word);
     
     if (!isWordValid) {
@@ -102,7 +117,7 @@ export const validateMove = (
     totalScore += 50;
   }
   
-  const isValid = errors.length === 0;
+  const isValid = errors.length === 0 && validatedWords.length > 0;
   
   return {
     isValid,

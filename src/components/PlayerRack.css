@@ -1,71 +1,83 @@
 .player-rack {
-  margin: 20px;
-  padding: 15px;
-  background-color: #8B4513;
-  border-radius: 8px;
+  margin: 15px 20px; /* Reduced margin */
+  padding: 15px; /* Reduced padding */
+  background-color: #5D4037; /* Darker brown for rack */
+  border-radius: 8px; /* Slightly less rounded */
   text-align: center;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4), /* Inner shadow for depth */
+              0 5px 10px rgba(0, 0, 0, 0.3); /* Outer shadow for lift */
+  position: relative;
+  z-index: 5;
 }
 
 .player-rack h3 {
   color: white;
-  margin: 0 0 15px 0;
-  font-size: 18px;
+  margin: 0 0 12px 0; /* Reduced margin */
+  font-size: 18px; /* Reduced font size */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 .rack-tiles {
   display: flex;
   justify-content: center;
-  gap: 5px;
+  gap: 5px; /* Reduced gap between tiles */
   flex-wrap: wrap;
 }
 
 .rack-tile {
-  width: 40px;
+  width: 40px; /* Reduced tile size */
   height: 40px;
-  background-color: #F5F5DC;
-  border: 2px solid #654321;
-  border-radius: 4px;
+  background-color: #FFFDE7; /* Off-white for tiles */
+  border: 2px solid #A1887F; /* Muted brown border */
+  border-radius: 5px; /* Slightly less rounded corners */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: grab;
   position: relative;
-  transition: all 0.2s ease;
+  transition: all 0.2s ease-out;
   user-select: none;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2), /* Main tile shadow */
+              inset 0 0 4px rgba(255, 255, 255, 0.5); /* Inner highlight */
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
 }
 
 .rack-tile:active {
   cursor: grabbing;
+  transform: scale(1.05) rotateX(4deg); /* Less pronounced active state */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
 }
 
 .rack-tile[draggable="true"]:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  transform: translateY(-3px) rotateX(2deg); /* Less pronounced lift and rotation on hover */
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.35);
 }
 
 .rack-tile:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px); /* Less pronounced lift on hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
 }
 
 .rack-tile.selected {
-  border-color: #FF6347;
-  background-color: #FFE4E1;
-  transform: translateY(-3px);
-  box-shadow: 0 6px 12px rgba(255, 99, 71, 0.4);
+  border-color: #E64A19; /* Muted orange-red for selected */
+  background-color: #FFCCBC; /* Lighter orange-red background */
+  transform: translateY(-3px) rotateX(2deg);
+  box-shadow: 0 6px 12px rgba(230, 74, 25, 0.4);
 }
 
 .rack-tile .tile-letter {
-  font-size: 16px;
+  font-size: 16px; /* Reduced letter font size */
   font-weight: bold;
-  color: #000;
+  color: #3E2723; /* Dark brown for letter */
   line-height: 1;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .rack-tile .tile-value {
-  font-size: 10px;
-  color: #666;
+  font-size: 10px; /* Reduced value font size */
+  color: #6D4C41; /* Muted brown for value */
   position: absolute;
   bottom: 2px;
   right: 3px;
@@ -74,7 +86,7 @@
 
 /* Shuffle animation */
 .rack-tile.shuffling {
-  animation: shuffleTile 0.8s ease-in-out;
+  animation: shuffleTile 0.7s ease-in-out;
 }
 
 @keyframes shuffleTile {
@@ -82,13 +94,13 @@
     transform: translateY(0) rotate(0deg) scale(1);
   }
   25% {
-    transform: translateY(-20px) rotate(-15deg) scale(1.1);
+    transform: translateY(-15px) rotate(-10deg) scale(1.1);
   }
   50% {
-    transform: translateY(-30px) rotate(10deg) scale(1.2);
+    transform: translateY(-25px) rotate(8deg) scale(1.15);
   }
   75% {
-    transform: translateY(-15px) rotate(-5deg) scale(1.1);
+    transform: translateY(-10px) rotate(-4deg) scale(1.05);
   }
   100% {
     transform: translateY(0) rotate(0deg) scale(1);
@@ -105,7 +117,7 @@
   bottom: -5px;
   background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
   border-radius: 6px;
-  animation: shimmer 0.8s ease-in-out;
+  animation: shimmer 0.7s ease-in-out;
   z-index: -1;
 }
 
@@ -124,9 +136,9 @@
 }
 
 .rack-tiles.shuffling .rack-tile:nth-child(1) { animation-delay: 0s; }
-.rack-tiles.shuffling .rack-tile:nth-child(2) { animation-delay: 0.1s; }
-.rack-tiles.shuffling .rack-tile:nth-child(3) { animation-delay: 0.2s; }
-.rack-tiles.shuffling .rack-tile:nth-child(4) { animation-delay: 0.3s; }
-.rack-tiles.shuffling .rack-tile:nth-child(5) { animation-delay: 0.4s; }
-.rack-tiles.shuffling .rack-tile:nth-child(6) { animation-delay: 0.5s; }
-.rack-tiles.shuffling .rack-tile:nth-child(7) { animation-delay: 0.6s; }
+.rack-tiles.shuffling .rack-tile:nth-child(2) { animation-delay: 0.07s; }
+.rack-tiles.shuffling .rack-tile:nth-child(3) { animation-delay: 0.14s; }
+.rack-tiles.shuffling .rack-tile:nth-child(4) { animation-delay: 0.21s; }
+.rack-tiles.shuffling .rack-tile:nth-child(5) { animation-delay: 0.28s; }
+.rack-tiles.shuffling .rack-tile:nth-child(6) { animation-delay: 0.35s; }
+.rack-tiles.shuffling .rack-tile:nth-child(7) { animation-delay: 0.42s; }

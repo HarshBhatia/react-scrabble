@@ -4,6 +4,8 @@ import PlayerRack from './components/PlayerRack';
 import PlayerInfo from './components/PlayerInfo';
 import GameControls from './components/GameControls';
 import ValidationMessage from './components/ValidationMessage';
+import WordSuccessModal from './components/WordSuccessModal';
+import PlayerNameInput from './components/PlayerNameInput';
 import { useScrabbleGame } from './hooks/useScrabbleGame';
 import './App.css';
 
@@ -15,6 +17,9 @@ function App() {
         isShuffling,
         validationError,
         isValidating,
+        showSuccessModal,
+        successModalData,
+        realtimeValidation,
         placeTile,
         handleTileDrop,
         handleTileReturn,
@@ -23,8 +28,20 @@ function App() {
         submitWord,
         passTurn,
         shuffleRack,
-        recallAllTiles
+        recallAllTiles,
+        handleCloseSuccessModal,
+        startGame,
+        gameStarted,
+        newGame
     } = useScrabbleGame();
+
+    if (!gameStarted || !gameState) {
+        return (
+            <div className="App">
+                <PlayerNameInput onStartGame={startGame} />
+            </div>
+        );
+    }
 
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
 
@@ -39,15 +56,16 @@ function App() {
                     currentPlayerIndex={gameState.currentPlayerIndex}
                     tilesRemaining={gameState.tileBag.length}
                 />
-                
+
                 <GameBoard
                     board={gameState.board}
                     onSquareClick={placeTile}
                     onTileDrop={handleTileDrop}
                     onTileRemove={() => {}} // Not used since we handle via drag
                     canRemoveTile={canRemoveTile}
+                    realtimeValidation={realtimeValidation}
                 />
-                
+
                 <PlayerRack
                     tiles={currentPlayer.rack}
                     selectedTile={selectedTile}
@@ -66,6 +84,7 @@ function App() {
                     onPassTurn={passTurn}
                     onShuffleRack={shuffleRack}
                     onRecallTiles={recallAllTiles}
+                    onNewGame={newGame}
                     canSubmit={placedTiles.length > 0 && !isValidating}
                     canRecall={placedTiles.length > 0}
                 />
@@ -73,6 +92,16 @@ function App() {
             <footer>
                 <p>&copy; 2024 Scrabble React</p>
             </footer>
+
+            {successModalData && (
+                <WordSuccessModal
+                    show={showSuccessModal}
+                    playerName={successModalData.playerName}
+                    words={successModalData.words}
+                    points={successModalData.points}
+                    onClose={handleCloseSuccessModal}
+                />
+            )}
         </div>
     );
 }

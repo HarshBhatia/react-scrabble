@@ -110,7 +110,7 @@ export const getAllWordsFormed = (
     }
   }
   
-  return words.filter(word => word.tiles.some(tile => tile.isNew)); // Only words with new tiles
+  return words; // Removed the filter here
 };
 
 export const isFirstMoveCenterRequired = (board: BoardSquare[][]): boolean => {

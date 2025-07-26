@@ -1,39 +1,53 @@
 .App {
   text-align: center;
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: #2E7D32; /* Dark Green Felt Base */
+  background-image: 
+    radial-gradient(circle at 100% 100%, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 50%),
+    radial-gradient(circle at 0% 0%, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 50%),
+    radial-gradient(circle at 100% 0%, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 50%),
+    radial-gradient(circle at 0% 100%, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 50%);
+  color: #E8F5E9; /* Light Green - strong text color for contrast */
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #1B5E20; /* Even Darker Green - vibrant header */
   padding: 20px;
   color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Stronger 3D effect */
+  position: relative;
+  z-index: 10;
 }
 
 .App-header h1 {
   margin: 0;
-  font-size: 2em;
+  font-size: 2.8em; /* Slightly larger font */
+  letter-spacing: 1.5px; /* Increased letter spacing */
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4); /* More pronounced text shadow */
 }
 
 main {
-  padding: 20px;
+  padding: 25px; /* Increased padding */
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #fafafa;
+  background-color: transparent; /* Make main transparent to show felt background */
 }
 
 footer {
-  background-color: #f5f5f5;
-  padding: 10px;
-  border-top: 1px solid #ddd;
+  background-color: #1B5E20; /* Even Darker Green - vibrant footer */
+  padding: 12px;
+  border-top: 1px solid #388E3C;
   margin-top: auto;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.15); /* Stronger 3D effect */
 }
 
 footer p {
   margin: 0;
-  color: #666;
+  color: #A5D6A7; /* Light Green - vibrant text */
+  font-size: 1em; /* Slightly larger font */
 }
